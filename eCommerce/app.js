@@ -55,20 +55,27 @@ $(document).ready(() => {
 
   const updateSubTotal = (price) => {
     subTotalValue = Math.round((subTotalValue + price) * 100) / 100;
-    subTotal.text(`$ ${subTotalValue}`);
+    subTotal.text(`$${subTotalValue}`);
   };
   const updateTax = () => {
     taxValue = Math.round(subTotalValue * 9.75) / 100;
-    tax.text(`$ ${taxValue}`);
+    tax.text(`$${taxValue}`);
   };
   const updateTotal = () => {
     totalValue = Math.round((subTotalValue + taxValue) * 100) / 100;
-    total.text(`$ ${totalValue}`);
+    total.text(`$${totalValue}`);
   };
   const updatePrice = (price) => {
     updateSubTotal(price);
     updateTax();
     updateTotal();
+  };
+
+  const updateCartSubTotal = (price, quantity, index) => {
+    //
+    $(`#${index} .subtotal`).text(
+      `$${Math.round(price * quantity * 100) / 100}`
+    );
   };
 
   const decrease = (e) => {
@@ -82,6 +89,11 @@ $(document).ready(() => {
       menuItems[e.data.itemIndex].count -= 1;
       $(`.${e.data.itemIndex}`).text(menuItems[e.data.itemIndex].count);
       updatePrice(-menuItems[e.data.itemIndex].price / 100);
+      updateCartSubTotal(
+        menuItems[e.data.itemIndex].price / 100,
+        menuItems[e.data.itemIndex].count,
+        e.data.itemIndex
+      );
     }
     if ($('.cart-summary li').length === 0) {
       $('.empty').show();
@@ -91,6 +103,11 @@ $(document).ready(() => {
     menuItems[e.data.itemIndex].count += 1;
     $(`.${e.data.itemIndex}`).text(menuItems[e.data.itemIndex].count);
     updatePrice(menuItems[e.data.itemIndex].price / 100);
+    updateCartSubTotal(
+      menuItems[e.data.itemIndex].price / 100,
+      menuItems[e.data.itemIndex].count,
+      e.data.itemIndex
+    );
   };
 
   const appendToCart = (itemIndex) => {
@@ -162,7 +179,7 @@ $(document).ready(() => {
     div = document.createElement('div');
     $(div)
       .attr({ class: 'subtotal' })
-      .text(menuItems[itemIndex].price / 100);
+      .text(`$${Math.round(menuItems[itemIndex].price) / 100}`);
     fragment.appendChild(div);
 
     li.append(fragment);
