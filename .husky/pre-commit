@@ -2,4 +2,5 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 # npm test
+npx pretty-quick --staged ng lint ng test
 npx lint-staged
