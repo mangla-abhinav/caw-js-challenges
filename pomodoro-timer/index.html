@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>01 - Pomodoro || Advent of JavaScript</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <div class="ring ending">
+      <svg width="518" height="518" viewBox="0 0 518 518">
+        <circle stroke-width="9px" x="0" y="y" cx="259" cy="259" r="254" />
+      </svg>
+    </div>
+
+    <div class="timer">
+      <div class="time">
+        <div class="minutes">
+          <input type="text" id="minutes" value="15" disabled />
+        </div>
+        <div class="colon">:</div>
+        <div class="seconds">
+          <input type="text" id="seconds" value="00" disabled />
+        </div>
+      </div>
+      <button class="start">start</button>
+      <button class="settings">
+        <img src="images/gear.svg" alt="Settings" />
+      </button>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js" integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
