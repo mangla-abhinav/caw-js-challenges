@@ -1,0 +1,63 @@
+name: develop_deploy
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: npm install eslint
+      - run: npx eslint . --ext .js,.jsx,.ts,.tsx
+  stylelint:
+    needs: eslint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: npm install --save-dev stylelint stylelint-config-standard
+      - run: npx stylelint "**/*.css"
+  prettier:
+    needs: stylelint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: npm install --save-dev --save-exact prettier
+      - run: npx prettier --write .
+  s3_sync:
+    needs: prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Copy files to the s3 website content bucket
+        run: aws s3 sync . s3://${{ secrets.AWS_BUCKET }} --delete --follow-symlinks --exclude '.git/*' --exclude '.github/*'
+  s3_invalidate_cache:
+    needs: s3_sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+      - name: Invalidate Cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION }} --paths "/*"

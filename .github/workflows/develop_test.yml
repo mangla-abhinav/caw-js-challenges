@@ -1,0 +1,35 @@
+name: develop_test
+on:
+  pull_request:
+    branches:
+      - develop
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: npm install eslint
+      - run: npx eslint . --ext .js,.jsx,.ts,.tsx
+  stylelint:
+    needs: eslint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: npm install --save-dev stylelint stylelint-config-standard
+      - run: npx stylelint "**/*.css"
+  prettier:
+    needs: stylelint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: npm install --save-dev --save-exact prettier
+      - run: npx prettier --write .
